@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Everything in One Place</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Figtree:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;700&display=swap">
+<style>
+:root{--serif:'Fraunces',Georgia,serif;--sans:'Figtree',system-ui,sans-serif}
+[dir=rtl]{--serif:'Noto Sans Arabic',system-ui,sans-serif;--sans:'Noto Sans Arabic',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;overflow-x:hidden;-webkit-text-size-adjust:100%}
+a{color:inherit}
+body{overflow-x:clip;max-width:100%;font-family:var(--sans);line-height:1.7;background:#0b0820;color:#efeaff;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:3px solid #f2c879;outline-offset:3px;border-radius:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes bob{50%{transform:translateY(-10px)}}
+
+/* Loading screen */
+.ld{position:fixed;inset:0;z-index:100;display:grid;place-content:center;justify-items:center;gap:26px;background:radial-gradient(circle at 50% 40%,#2a1d5c,#0b0820 70%);animation:ldout .7s 3.3s forwards}
+.ld.out{opacity:0;visibility:hidden;transition:opacity .7s,visibility .7s}
+@keyframes ldout{to{opacity:0;visibility:hidden}}
+.orbit{position:relative;width:min(320px,80vw);height:min(320px,80vw)}
+.ring{position:absolute;inset:0;animation:spin 9s linear infinite}
+.ring.rev{animation-direction:reverse}
+.ring.in{inset:20%;animation-duration:7s}
+.ring::before{content:"";position:absolute;inset:0;border:1px dashed rgba(255,255,255,.22);border-radius:50%}
+.ic{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;display:grid;place-items:center;font-size:1.7rem;border-radius:50%;background:rgba(255,255,255,.1);backdrop-filter:blur(4px);transform:rotate(var(--a)) translateX(var(--r)) rotate(calc(-1*var(--a)))}
+.ic span{display:block;animation:spin 9s linear infinite reverse}
+.ring.rev .ic span{animation-direction:normal}
+.ring.in .ic span{animation-duration:7s}
+.core{position:absolute;inset:38%;border-radius:50%;background:radial-gradient(circle,#fff,#f2c879 45%,transparent 72%);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.25);opacity:.8}}
+.ld b{font-family:var(--serif);font-size:1.6rem;text-align:center}
+.ld small{display:block;text-align:center;color:#cfc8ee;margin-top:4px}
+
+/* Nav */
+.prog{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,#f2c879,#5eead4,#1f6feb);z-index:30}
+.nav{position:fixed;top:3px;left:0;right:0;z-index:20;display:flex;align-items:center;gap:12px;padding:10px 20px;background:rgba(11,8,32,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1)}
+.logo{font-family:var(--serif);font-weight:600;text-decoration:none;white-space:nowrap}
+.links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+.links a{text-decoration:none;font-weight:500;font-size:.92rem;padding:5px 12px;border-radius:999px;color:#cfc8ee;white-space:nowrap;transition:.2s}
+.links a:hover{color:#fff}
+.links a.on{background:#fff;color:#0b0820}
+.lang{flex:none;font:600 .92rem var(--sans);color:#0b0820;background:#f2c879;border:0;padding:7px 16px;border-radius:999px;cursor:pointer}
+
+/* Home */
+.home{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr);align-content:center;padding:120px 24px 70px;text-align:center;background:radial-gradient(800px 480px at 15% 10%,rgba(124,92,255,.35),transparent 60%),radial-gradient(700px 480px at 90% 85%,rgba(61,220,151,.18),transparent 60%),#0b0820;position:relative;overflow:hidden}
+.stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{opacity:.15;transform:scale(.6)}}
+.home h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.8rem,9vw,6.6rem);line-height:1.1;letter-spacing:-.02em;animation:up 1s 2.6s both}
+.home h1 em{font-style:normal;background:linear-gradient(90deg,#f2c879,#8fe3c0 55%,#7db2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.home .s{max-width:46ch;margin:20px auto 0;font-size:1.18rem;color:#cfc8ee;animation:up 1s 2.75s both}
+.by{display:inline-block;margin:22px auto 0;padding:7px 18px;border:1px solid rgba(255,255,255,.3);border-radius:999px;font-weight:500;animation:up 1s 2.9s both}
+.home>div:not(.stars){min-width:0;width:100%}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:1120px;margin:50px auto 0;animation:up 1s 3.05s both}
+.tile{position:relative;aspect-ratio:3/4;border-radius:20px;overflow:hidden;text-decoration:none;text-align:start;background:linear-gradient(160deg,#3a2a78,#1a1238);transition:transform .35s}
+.tile:hover{transform:translateY(-8px)}
+.tile .pe{font-size:3rem;top:18%}
+.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(5,5,15,.9))}
+.tile div{position:absolute;z-index:1;inset-inline:14px;bottom:14px}
+.tile b{display:block;font-family:var(--serif);font-size:1.25rem;line-height:1.2}
+.tile span{font-size:.82rem;color:#d8d2f2}
+.pe{position:absolute;inset-inline:0;top:0;bottom:0;display:grid;place-content:center;font-size:3.4rem;opacity:.55;animation:bob 4s ease-in-out infinite}
+img.p{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s,transform .8s}
+img.p.ok{opacity:1}
+.tile:hover img.p{transform:scale(1.08)}
+
+/* Sections */
+.sec{position:relative;overflow:hidden;background:var(--bg);color:var(--ink);scroll-margin-top:50px}
+.astro{--bg:#0f0b24;--ink:#efeaff;--muted:#b9b0dc;--accent:#f2c879;--card:#1a1438;--line:rgba(239,234,255,.16)}
+.med{--bg:#eef7f4;--ink:#0f2f2c;--muted:#48675f;--accent:#08706c;--card:#fff;--line:rgba(15,47,44,.14)}
+.law{--bg:#14213d;--ink:#f3ecdc;--muted:#bcc3d6;--accent:#e0b05a;--card:#1d2d52;--line:rgba(243,236,220,.2)}
+.it{--bg:#eef2f8;--ink:#0d1b2e;--muted:#46597a;--accent:#1558c9;--card:#fff;--line:rgba(13,27,46,.14)}
+.chem{--bg:#0c2a2b;--ink:#e6fffb;--muted:#a5d1cc;--accent:#5eead4;--card:#123a3a;--line:rgba(230,255,251,.18)}
+.phy{--bg:#fbf3e4;--ink:#2b1a06;--muted:#6b5636;--accent:#b04a00;--card:#fff;--line:rgba(43,26,6,.15)}
+.bio{--bg:#0f2417;--ink:#eafbe9;--muted:#a9cdb0;--accent:#8ae6a2;--card:#17331f;--line:rgba(234,251,233,.18)}
+.banner{position:relative;min-height:440px;display:grid;align-items:end;overflow:hidden;background:radial-gradient(circle at 80% 30%,color-mix(in srgb,var(--accent) 35%,var(--card)),var(--card) 65%)}
+.banner .pe{inset-inline:auto;inset-block:8% auto;inset-inline-end:7%;font-size:11rem;opacity:.22}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12),var(--bg))}
+.bt{position:relative;z-index:1;max-width:1120px;width:100%;margin:0 auto;padding:110px 24px 34px}
+.num{font-family:var(--serif);color:var(--accent);font-weight:600}
+.bt h2{font-family:var(--serif);font-weight:600;font-size:clamp(2.2rem,6vw,4.4rem);line-height:1.1;margin-top:4px}
+.bt p{max-width:62ch;margin-top:14px;font-size:1.1rem;opacity:.95}
+.inner{max-width:1120px;margin:0 auto;padding:40px 24px 90px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;transition:transform .3s,border-color .3s}
+.card:hover{transform:translateY(-5px);border-color:var(--accent)}
+.card .e{font-size:2rem}
+.card h4{font-family:var(--serif);font-size:1.2rem;margin:8px 0 6px}
+.card p{color:var(--muted);font-size:.97rem}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:30px}
+.ph{position:relative;aspect-ratio:3/2;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(circle at 30% 20%,color-mix(in srgb,var(--accent) 30%,var(--card)),var(--card))}
+.ph:hover img.p{transform:scale(1.07)}
+.note{margin-top:40px;padding:16px 20px;border-inline-start:4px solid var(--accent);background:var(--card);border-radius:12px;color:var(--muted);font-size:.96rem}
+.foot{background:#070514;color:#b9b0dc;text-align:center;padding:50px 24px;font-size:.95rem}
+.foot b{display:block;font-family:var(--serif);font-size:1.4rem;color:#fff;margin-bottom:6px}
+
+
+/* Scroll reveals */
+:root{--dir:1}[dir=rtl]{--dir:-1}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s,transform .8s,border-color .3s;transition-delay:calc(var(--i,0)*110ms)}
+.rv.sl{transform:translateX(calc(var(--dir)*-56px))}
+.rv.sr{transform:translateX(calc(var(--dir)*56px))}
+.rv.in{opacity:1;transform:none}
+.card.in:hover{transform:translateY(-5px)}
+.banner .pe{translate:0 var(--py,0)}
+.banner img.p{inset:-10% 0;height:120%;translate:0 var(--py,0)}
+.inner{position:relative;z-index:1}
+.h3{font-family:var(--serif);font-weight:600;font-size:1.7rem;margin:54px 0 18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:34px}
+.stat{padding:22px 24px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 16%,var(--card)),var(--card))}
+.stat b{display:block;font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.2rem);color:var(--accent);line-height:1.15}
+.stat span{color:var(--muted);font-size:.95rem}
+.chaps{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.chap{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px}
+.chap i{font:600 2.6rem/1 var(--serif);color:var(--accent);opacity:.5;font-style:normal}
+.chap h4{font-family:var(--serif);font-size:1.35rem;margin:6px 0 8px}
+.chap p{color:var(--muted)}
+.fact{display:flex;gap:16px;align-items:flex-start;margin-top:34px;padding:22px 26px;border-radius:18px;background:color-mix(in srgb,var(--accent) 14%,var(--card));border:1px solid var(--line)}
+.fact>span{font-size:2rem}.fact b{display:block;color:var(--accent)}
+@media(max-width:800px){.chaps{grid-template-columns:1fr}}
+
+/* Topic backgrounds */
+.fx{position:absolute;inset:0;overflow:hidden;pointer-events:none;color:var(--accent);z-index:0}
+.f{position:absolute;font-style:normal;opacity:.2;line-height:1}
+.it .f{font-family:ui-monospace,Menlo,Consolas,monospace}
+.f-rise{animation:frise linear infinite}.f-fall{animation:ffall linear infinite}.f-tw{animation:ftw ease-in-out infinite}.f-drift{animation:fdrift ease-in-out infinite}.f-spin{animation:spin linear infinite}
+@keyframes frise{0%{transform:translateY(0);opacity:0}20%{opacity:.3}100%{transform:translateY(-320px);opacity:0}}
+@keyframes ffall{0%{transform:translateY(-120px);opacity:0}20%{opacity:.35}100%{transform:translateY(280px);opacity:0}}
+@keyframes ftw{50%{opacity:.04;transform:scale(.5)}}
+@keyframes fdrift{50%{transform:translate(40px,-30px) rotate(20deg)}}
+.wheel{position:absolute;inset-inline-end:-170px;top:460px;width:420px;height:420px;border:1px dashed currentColor;border-radius:50%;opacity:.28;animation:spin 90s linear infinite}
+.wheel i{position:absolute;left:50%;top:50%;font-style:normal;font-size:2rem;margin:-16px;transform:rotate(var(--a)) translateY(-210px)}
+.ecg{position:absolute;left:0;width:100%;top:560px;height:120px;opacity:.4}
+.ecg path{fill:none;stroke:currentColor;stroke-width:3;stroke-dasharray:1500;stroke-dashoffset:1500;animation:dash 5s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-1500}}
+.atom{position:absolute;inset-inline-end:4%;top:540px;width:260px;height:260px;opacity:.3;perspective:700px}
+.atom i{position:absolute;inset:0;border:2px solid currentColor;border-radius:50%;animation:orb 9s linear infinite}
+@keyframes orb{from{transform:rotateZ(var(--a)) rotateX(72deg) rotateZ(0)}to{transform:rotateZ(var(--a)) rotateX(72deg) rotateZ(360deg)}}
+.atom::after{content:"";position:absolute;inset:44%;border-radius:50%;background:currentColor}
+.dna{position:absolute;inset-inline-start:2%;top:520px;display:grid;gap:10px;opacity:.3}
+.dna b{display:block;width:90px;height:10px;position:relative;animation:dn 3s ease-in-out infinite;animation-delay:calc(var(--i)*-.2s)}
+.dna b::before,.dna b::after{content:"";position:absolute;top:0;width:10px;height:10px;border-radius:50%;background:currentColor}
+.dna b::before{left:0}.dna b::after{right:0}
+@keyframes dn{50%{transform:scaleX(.1)}}
+@media(max-width:700px){.logo{display:none}.banner .pe{font-size:7rem}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="ld" id="ld" aria-hidden="true">
+  <div class="orbit" id="orbit"></div>
+  <div><b id="ldt">Everything in One Place</b><small id="ldb">Designed by Salar Sarbast</small></div>
+</div>
+<div class="prog" id="prog"></div>
+<nav class="nav" aria-label="Main">
+  <a class="logo" href="#top" id="logo"></a>
+  <div class="links" id="links"></div>
+  <button class="lang" id="lang"></button>
+</nav>
+<header class="home" id="top">
+  <div class="stars" id="stars" aria-hidden="true"></div>
+  <div>
+    <h1 id="h1"></h1>
+    <p class="s" id="sub"></p>
+    <span class="by" id="by"></span>
+    <div class="tiles" id="tiles"></div>
+  </div>
+</header>
+<div id="secs"></div>
+<footer class="foot" id="foot"></footer>
+
+<script>
+/* Photos are free-to-use Pexels images. If one cannot load, its emoji panel stays, so nothing looks broken. */
+const SLUG={39192382:'free-photo-of-doctor-consultation-in-modern-clinic-office',39192356:'free-photo-of-doctor-measuring-blood-pressure-of-senior-patient',16328887:'free-photo-of-particles-seen-under-a-microscope',36372301:'free-photo-of-microscopic-view-of-human-blood-cells',29859866:'free-photo-of-bright-red-microorganisms-under-microscope',33771472:'free-photo-of-microscopic-view-of-bacteria-sample-slide'};
+const urls=(id,w)=>{const q=`?auto=compress&cs=tinysrgb&w=${w}`,b=`https://images.pexels.com/photos/${id}/pexels-photo-${id}`;return [b+'.jpeg'+q,...(SLUG[id]?[`${b}/${SLUG[id]}.jpeg${q}`]:[])]};
+const pic=(id,w,alt)=>`<img class="p" alt="${alt}" data-id="${id}" data-w="${w}">`;
+
+const UI={
+ title:['Everything in One Place','هەمی تشت ل یەك جهی'],
+ h1:['Everything<br>in <em>one place</em>','هەمی تشت<br><em>ل یەك جهی</em>'],
+ sub:['Seven subjects, explained clearly in English and Badini Kurdish.','حەفت بابەت، ب ڕوونی ب ئینگلیزی و كوردی بادینی.'],
+ by:['Designed by Salar Sarbast','دیزاینكەر: سالار سەربەست'],
+ foot:['For general learning only. Photos from Pexels.','تەنێ بۆ فێربوونا گشتی. وێنە ژ Pexels.'],
+ deep:['Going deeper','قوولتر بچین'],
+ dyk:['Did you know?','تە دزانی؟'],
+ btn:['کوردی','English']
+};
+
+const S=[
+{id:'astrology',e:'✨',cls:'astro',name:['Astrology','ئەستێرناسی'],tag:['Stars, signs and meaning','ستێر، بورج و مانا'],hero:982384,gal:[4254548,8495471,13872805],
+ title:['Reading the sky','خواندنا ئەسمانی'],
+ lede:['Astrology links the Sun, Moon and planets to personality and life themes. People have practised it for thousands of years. It is a tradition for reflection, not a science.','ئەستێرناسی رۆژ و هەیڤ و پلانێتان ب كەسایەتی و ژیانێ ڤە گرێ ددەت. مرۆڤان هزاران ساڵە ڤێ دكەن. ئەڤە نەریتەكە بۆ هزرکرنێ، نە زانستە.'],
+ cards:[['☀️',['Sun, Moon and Rising','رۆژ، هەیڤ و ئاسۆ'],['The Sun sign is your core self, the Moon your feelings, and the Rising sign how others first see you.','بورجا رۆژێ كەسایەتیا تە یا سەرەكییە، هەیڤ هەستێن تە، و ئاسۆ ئەو چەوانیە یا خەلک تە ب وی دبینن.']],
+  ['🪐',['The planets','پلانێت'],['Mercury stands for communication, Venus for love, Mars for action, Jupiter for growth and Saturn for discipline.','عوتارد ئاخفتنێ، زوهرە ئەڤینێ، مەریخ چالاكییێ، موشتەری گەشەكرنێ و زوحەل ڕێكخستنێ نیشان ددەن.']],
+  ['🏠',['Twelve houses','دوازدە ماڵ'],['A chart has twelve houses, each for an area of life such as money, home, partners and career.','نەخشەیەكا ئەستێرناسییێ دوازدە ماڵان هەیە، هەر ئێك بۆ بوارەكێ ژیانێ، وەك دراڤ و ماڵ و هەڤژین و كار.']],
+  ['🌙',['Moon phases','قۆناغێن هەیڤێ'],['The moon cycle lasts about 29.5 days, from new moon to full moon and back again.','چەرخا هەیڤێ نێزیكی ٢٩.٥ رۆژانە، ژ هەیڤا نوو هەتا هەیڤا تژی و ڤەگەڕیان.']]],
+ note:['For entertainment and reflection only. Astrology cannot reliably predict events.','تەنێ بۆ خۆشی و هزرکرنێ یە. ئەستێرناسی نەشێت رووداوان ب شێوەیەكێ پشتڕاستكری پێشبینی بكەت.']},
+{id:'medicine',e:'🩺',cls:'med',name:['Medicine','پزیشکی'],tag:['Health, body and habits','تەندروستی، لەش و خووی'],hero:39192382,gal:[5214998,39192356,5215016],
+ title:['How the body works','لەش چەوا كار دكەت'],
+ lede:['Medicine prevents, diagnoses and treats illness. Most good health comes from simple habits: sleep, movement, healthy food and regular check-ups.','پزیشکی پێشگریێ ژ نەخۆشیان دكەت، دیاردكەت و چارەسەر دكەت. زێدەتر تەندروستی ژ خووێن سادە دهێت: خەوتن، جووڵە، خوارنا باش و پشكنینا بەردەوام.'],
+ cards:[['❤️',['The heart','دل'],['The heart beats about 100,000 times a day and pushes blood around the whole body.','دل نێزیكی ١٠٠٬٠٠٠ جاران د رۆژەكێ دا لێ ددەت و خوین ب هەمی لەشی ڤە دبەت.']],
+  ['🫁',['The lungs','سییەك'],['Lungs bring oxygen in and carry carbon dioxide out, about 12 to 20 breaths a minute at rest.','سییەك ئۆكسجینێ ڤەدكێشن و گازا كاربۆنێ دەردئێخن، د ئارامیێ دا ١٢ هەتا ٢٠ هەناسە د خولەكەكێ دا.']],
+  ['🧠',['The brain','میشك'],['The brain and nerves control movement, thought, senses and many automatic jobs.','میشك و دەمار جووڵە و هزر و هەستان و گەلەك كارێن خۆڕسك ڕێڤە دبەن.']],
+  ['🍽️',['Digestion','هەرسكرن'],['Food is broken down in the stomach and small intestine, where nutrients enter the blood.','خوارن د گەدە و ڕووڤیێ باریك دا دهێتە پارچەكرن و خۆراك دچنە د خوینێ دا.']]],
+ note:['General education only. For chest pain, trouble breathing or signs of a stroke, get emergency help right away.','تەنێ فێركرنا گشتییە. ئەگەر ئێشا سنگی، گرفتا هەناسەدانێ یان نیشانێن سەكتەی هەبن، دەستبەجێ فریاگوزاریا لەزگین ببینە.']},
+{id:'law',e:'⚖️',cls:'law',name:['Law','یاسا'],tag:['Rights, courts and cases','مافان، دادگە و دۆسیە'],hero:6077326,gal:[5668473,6077447,37732186],
+ title:['The rules we live by','ئەو یاسایێن ئەم ب وان دژین'],
+ lede:['Law is the set of rules a society uses to keep order, protect rights and settle disputes. Rules differ from country to country, but many ideas are shared.','یاسا كۆمەكا ڕێسایانە كو كۆمەلگە ب كار دئینیت دا ڕێكخستنێ بپارێزیت، مافان بپارێزیت و ناكۆكییان چارەسەر بكەت. یاسا ژ وەلاتەكی بۆ وەلاتەكی جیاوازە.'],
+ cards:[['⚖️',['Criminal law','یاسایا تاوانان'],['Deals with offences like theft and assault. The state brings the case and must prove guilt.','پەیوەندی ب تاوانێن وەك دزی و لێدانێ هەیە. دەولەت دۆسیێ ڤەدكەت و دڤێت تاوانبارییێ ب دەلیل ئیسپات بكەت.']],
+  ['🤝',['Civil law','یاسایا مەدەنی'],['Settles disputes between people or companies, such as debts and property. The usual remedy is compensation.','ناكۆكییێن د ناڤبەرا خەلكی یان كۆمپانیان دا چارەسەر دكەت، وەك قەرز و موڵك. چارەسەرییا باو قەرەبووكرنە.']],
+  ['🏛️',['The constitution','دەستوور'],['Sets the powers of government and protects basic rights such as a fair trial and free speech.','دەسهەلاتێن حكومەتێ دیاردكەت و مافێن بنەڕەتی وەك دادگەهكرنا دادپەروەر و ئازادییا ڕادەربڕینێ دپارێزیت.']],
+  ['📜',['Contracts','گرێبەست'],['A contract is a legally binding promise. It needs an offer, an acceptance and something of value.','گرێبەست بەلێنەكا یاسایی یا ب پابەندكەرە. پێدڤیی ب پێشنیار و ڕازیبوون و تشتەكێ ب بها هەیە.']]],
+ note:['General information, not legal advice. Laws differ by country, so ask a qualified lawyer about your own case.','زانیاریا گشتییە، نە ڕاوێژا یاسایییە. یاسا ژ وەلاتەكی بۆ وەلاتەكی جیاوازە، ژ بەر هندێ ژ پارێزەرەكێ شارەزا بپرسە.']},
+{id:'it',e:'💻',cls:'it',name:['IT','تەکنەلۆجیا'],tag:['Networks, code and security','تۆڕ، كۆد و ئاسایش'],hero:574077,gal:[4816921,270373,577585],
+ title:['How technology runs','تەکنەلۆجیا چەوا كار دكەت'],
+ lede:['Information technology is how we store, send and protect data with computers and networks. It powers phones, banks and hospitals.','تەکنەلۆجیایا زانیاریێ ئەو ڕێیە كو ب كۆمپیوتەر و تۆڕان زانیاری پاشەكەفت دكەین، دنێرین و دپارێزین. موبایل و بانك و نەخۆشخانە پێ دچن.'],
+ cards:[['🌐',['Networking','تۆڕ'],['Devices talk over networks using addresses (IP) and rules called protocols. The internet is a network of networks.','ئامیر ب ڕێیا تۆڕان و ناڤنیشان (IP) و ڕێسایێن ب ناڤێ پرۆتۆكۆل گەل هەڤ دئاخڤن. ئینتەرنێت تۆڕەكە ژ تۆڕان.']],
+  ['🔐',['Security','ئاسایش'],['Cybersecurity protects data from attacks. Most breaches start with weak passwords or phishing emails.','ئاسایشا سایبەری زانیاریان ژ هێرشان دپارێزیت. زێدەتر شكاندن ب پاسۆردێن لاواز یان ئیمەیلێن ساخته دەست پێدكەن.']],
+  ['⌨️',['Code','كۆد'],['Developers write code in languages like Python and JavaScript, then test it and release it step by step.','پەرەپێدەر كۆدی ب زمانێن وەك Python و JavaScript دنڤێسن، پاشی تێست دكەن و پێلە پێلە بەلاڤ دكەن.']],
+  ['☁️',['The cloud','هەور'],['Cloud services rent out computing power over the internet. Databases store information so it can be found fast.','خزمەتگوزارییێن هەورێ هێزا كۆمپیوتەری ب ڕێیا ئینتەرنێتێ ب كرێ ددەن. بنكەیێن داتا زانیاریێ دپارێزن دا زوو بهێتە دیتن.']]],
+ note:['Stay safe: install updates, avoid unknown links and never share one-time codes with anyone.','ب ئاسایش بە: نویكرنەوەیان ئینستاڵ بكە، ل لینكێن نەناسیار دووربە و كۆدێن جارەكی ب كەسی نەدە.']},
+{id:'chemistry',e:'🧪',cls:'chem',name:['Chemistry','كیمیا'],tag:['Atoms, reactions and matter','ئەتۆم، كاردانەوە و مادە'],hero:4299431,gal:[5428259,8540821,8540009],
+ title:['What everything is made of','هەمی تشت ژ چ پێك دهێن'],
+ lede:['Chemistry studies matter: what it is made of, how it changes and how substances react. Everything around you, including you, is chemistry.','كیمیا مادەی دخوینیت: ژ چ پێك دهێت، چەوا دهێتە گوهۆڕین و مادە چەوا كاردانەوە دكەن. هەمی تشتێن دۆر تە، و تو ژی، كیمیانە.'],
+ cards:[['⚛️',['Atoms','ئەتۆم'],['Atoms are the tiny building blocks of matter, made of protons, neutrons and electrons.','ئەتۆم خشتێن بچووكێن مادەینە، ژ پرۆتۆن و نیوترۆن و ئەلەكترۆنان پێك دهێن.']],
+  ['📊',['The periodic table','خشتەیا خولی'],['The periodic table arranges the 118 known elements by their atomic number.','خشتەیا خولی ١١٨ توخمێن ناسكری ب ژمارا ئەتۆمی ڕیز دكەت.']],
+  ['🔥',['Reactions','كاردانەوە'],['In a reaction, substances turn into new ones. Signs include heat, light, gas bubbles or a colour change.','د كاردانەوەیێ دا مادە دبنە مادەیێن نوی. نیشان ژی گەرمی، ڕووناكی، بلبلا گازێ یان گوهۆڕینا ڕەنگییە.']],
+  ['💧',['Acids and bases','ترشی و بەیس'],['The pH scale runs from 0 to 14. Below 7 is acidic, 7 is neutral and above 7 is basic.','پێڤەرێ pH ژ ٠ هەتا ١٤ یە. ژێر ٧ ترشە، ٧ بێلایەنە و ل سەر ٧ بەیسە.']]],
+ note:['Safety first: never mix chemicals at home, and always follow your teacher’s or lab’s rules.','ئاسایش پێشتر: چ جارا مادەیان ل ماڵێ تێكەل نەكە و هەمیشە ڕێنماییێن مامۆستا یان تاقیگەهێ بگرە.']},
+{id:'physics',e:'⚡',cls:'phy',name:['Physics','فیزیک'],tag:['Forces, energy and the universe','هێز، ئەنەرژی و گەردوون'],hero:8495471,gal:[4254548,982384,13872805],
+ title:['How the universe moves','گەردوون چەوا دجوولیت'],
+ lede:['Physics explains matter, energy, motion and forces, from falling apples to distant galaxies. Its laws let us build machines, phones and spacecraft.','فیزیک مادە و ئەنەرژی و جووڵە و هێزان ڕوون دكەت، ژ كەفتنا سێڤان هەتا گەلاكسییێن دوور. یاسایێن وێ ڕێ ددەنە مە ئامیر و موبایل و ئەسمانگەرا چێكەین.'],
+ cards:[['🍎',['Gravity','هێزا كێشانێ'],['Gravity pulls objects with mass toward each other. On Earth it makes things fall at about 9.8 m/s².','هێزا كێشانێ تشتان ب هەڤ ڤە دكێشیت. ل سەر ئەردی ب نێزیكی ٩.٨ م/چ² دبیتە ئەگەرێ كەفتنا تشتان.']],
+  ['⚡',['Electricity','كارەبا'],['Electricity is the flow of electric charge, usually electrons moving through a wire.','كارەبا ڕێڤەچوونا بارگەیا كارەباییە، زێدەتر ئەلەكترۆن د تێلەكێ دا دچن.']],
+  ['💡',['Light','ڕووناكی'],['Light travels at about 300,000 km per second, the fastest speed possible in the universe.','ڕووناكی ب نێزیكی ٣٠٠٬٠٠٠ كم د چركەكێ دا دچیت، ئەڤە لەزترین لەزییە د گەردوونێ دا.']],
+  ['🚀',['Motion','جووڵە'],['Newton’s laws describe how forces change motion: objects keep moving the same way unless a force acts on them.','یاسایێن نیوتن دیاردكەن چەوا هێز جووڵەیێ دگوهۆڕن: تشت ب هەمان شێوە دجوولن هەتا هێزەك لێ نەدەت.']]],
+ note:['Physics rewards curiosity. Try simple experiments, like dropping two objects or shining a torch at a mirror.','فیزیک خەلاتا دلخۆشیا زانینێ ددەت. تاقیكرنەوەیێن سادە بكە، وەك هاڤێتنا دوو تشتان یان تیشكدانا فەنەرەكێ ل ئاوێنەیەكێ.']},
+{id:'biology',e:'🧬',cls:'bio',name:['Biology','بیۆلۆجی'],tag:['Cells, genes and life','خانە، ژن و ژیان'],hero:16328887,gal:[36372301,29859866,19728524],
+ title:['The science of life','زانستێ ژیانێ'],
+ lede:['Biology studies living things, from tiny cells to whole ecosystems. All life shares the same basics: cells, energy and DNA.','بیۆلۆجی ژیندارێن ڕەنگا ڕەنگ دخوینیت، ژ خانەیێن بچووك هەتا سیستەمێن ژینگەهی یێن مەزن. هەمی ژیان بنەمایێن وەك ئێك هەنە: خانە و ئەنەرژی و DNA.'],
+ cards:[['🔬',['Cells','خانە'],['The cell is the basic unit of life. Your body has roughly 37 trillion cells.','خانە بنەڕەتێ ژیانێ یە. لەشێ تە نێزیكی ٣٧ تریلیۆن خانە هەنە.']],
+  ['🧬',['DNA','DNA'],['DNA stores the instructions for building and running a living thing. Genes are sections of DNA.','DNA ڕێنماییێن چێكرن و ڕێڤەبرنا ژیندارەكی دپارێزیت. ژن پارچەیێن DNA نە.']],
+  ['🌱',['Photosynthesis','ڕووناكی‌وەرگرتن'],['Plants use sunlight, water and carbon dioxide to make food and release oxygen.','ڕووەك ڕووناكیا رۆژێ و ئاڤ و كاربۆن دایۆكساید بكار دئینن دا خوارنێ چێكەن و ئۆكسجینێ بەردەن.']],
+  ['🦠',['Microbes','مایكرۆب'],['Microbes such as bacteria are everywhere. Many are harmless or helpful, and a few cause disease.','مایكرۆب وەك باكتریا ل هەمی جهان هەنە. گەلەك زیانبار نینن یان بكەڵكن، و كێمەك نەخۆشییان چێدكەن.']]],
+ note:['Look closely: a cheap magnifier or a phone camera lens can show you a hidden world of tiny life.','ب وردی بنێڕە: ئامێرەكێ زێدەكەر یان لێنزا كامێرایا موبایلی دشێت جیهانەكێ نهێنی یێ ژیانا بچووك نیشان بدەت.']}
+];
+
+
+/* Deeper content. stat = [number, [label en, label ku], suffix, prefix, decimals, noThousandsSeparator] */
+const D={
+astrology:{stats:[[12,['zodiac signs','بورجێن زۆدیاكێ']],[4,['elements: fire, earth, air, water','توخم: ئاگر، خاک، هەوا، ئاڤ']],[29.5,['days in a lunar cycle','رۆژێن چەرخا هەیڤێ'],'','',1]],
+ ch:[[['The four elements','چار توخمان'],['Each sign belongs to an element. Fire signs (Aries, Leo, Sagittarius) are bold and energetic. Earth signs (Taurus, Virgo, Capricorn) are practical and steady. Air signs (Gemini, Libra, Aquarius) are curious and social. Water signs (Cancer, Scorpio, Pisces) are emotional and intuitive.','هەر بورجەك سەر ب توخمەكێ ڤە یە. بورجێن ئاگری (بەرخ، شێر، كەوانگر) ب جورئەت و چالاكن. بورجێن خاكێ (گا، كچ، بزن) ب پراكتیك و ئارامن. بورجێن هەوایێ (دووانە، تەرازوو، دۆڵچە) كەنجكۆڤ و جڤاكین. بورجێن ئاڤێ (شێلە، دووپشك، ماسی) ب هەست و دەروونن.']],
+  [['A very old tradition','نەریتەكا گەلەك كەڤن'],['Astrology began in ancient Mesopotamia, in and around Babylon, more than 2,000 years ago. Greek and later Islamic scholars developed it further and translated it. In early times astronomy and astrology were one field; today astronomy is the science that measures the sky.','ئەستێرناسی ل مێزۆپۆتامیای هاتیە دەستپێكرن، ل بابل و دۆرووبەرێن وێ، پتر ژ ٢٠٠٠ ساڵان بەری نوكە. زانایێن یۆنانی و پاشی یێن ئیسلامی پێشخستن و وەرگێڕان. د دەمێن كەڤن دا ئەستێرناسی و ئەستێرزانی ئێك بوون؛ ئەمڕۆ ئەستێرزانی ئەو زانستە یا ئەسمانی دپێڤیت.']]],
+ fact:['Astronomy measures the sky; astrology interprets it. Until a few centuries ago the two were studied together.','ئەستێرزانی ئەسمانی دپێڤیت؛ ئەستێرناسی ڤەدبێژیت. هەتا چەند سەدەیان بەری نوكە ئەڤان هەردوویان پێكڤە دهاتنە خواندن.']},
+medicine:{stats:[[206,['bones in an adult body','ئێسك د لەشێ مەزن دا']],[5,['litres of blood, roughly','لیتر خوین، نێزیكی']],[7,['or more hours of sleep for adults','دەمژمێر خەو یان پتر بۆ مەزنان'],'+']],
+ ch:[[['Prevention comes first','پێشگری یا ل پێشە'],['Vaccines train the immune system to recognise germs before they cause serious illness. Clean water, handwashing, healthy food and regular exercise prevent many diseases. Screening tests can find problems early, when they are easiest to treat.','ڤاكسین سیستەمێ بەرگریێ فێر دكەت مایكرۆبان بناسیت بەری كو نەخۆشییەكا گران چێبكەن. ئاڤا پاقژ و شووشتنا دەستان و خوارنا تەندروست و وەرزش گەلەك نەخۆشییان ڕادگرن. پشكنین دشێن كێشەیان ل دەستپێكێ بدۆزن، ئەو دەم كو چارەسەركرن ئاسانترە.']],
+  [['How doctors diagnose','پزیشك چەوا نەخۆشییێ دیار دكەن'],['Doctors start by listening to your story and asking questions. Then they examine you and, if needed, order tests such as blood tests, X-rays or ultrasound. Only after putting the pieces together do they suggest a treatment plan.','پزیشك ب گوهداریكرنا چیرۆكا تە و پرسیارەكرنێ دەست پێدكەن. پاشی تە پشكنین دكەن و ئەگەر پێدڤی بیت تاقیكرنەوەیان داخواز دكەن، وەك تاقیكرنا خوینێ و ئێكس‌ڕەی یان ئەلتراساوند. پشتی پارچەیان كۆمدكەن پلانا چارەسەرییێ پێشنیار دكەن.']]],
+ fact:['The word “doctor” comes from the Latin docere, which means “to teach”.','پەیڤا “doctor” ژ لاتینی docere دهێت، كو ب مانا “فێركرنێ” یە.']},
+law:{stats:[[3700,['years since the Code of Hammurabi','ساڵ ژ كۆدا حەمورابی'],'+'],[1948,['year of the Universal Declaration of Human Rights','ساڵا ڕاگەهاندنا جیهانی یا مافێن مرۆڤی'],'','',0,1],[3,['branches of government','لقێن حكومەتێ']]],
+ ch:[[['Where laws come from','یاسا ژ كیڤە دهێن'],['Laws come from several sources: constitutions, statutes passed by parliaments, court decisions and international treaties. Governments usually have three branches: the legislature makes laws, the executive applies them and the judiciary decides disputes.','یاسا ژ چەند سەرچاوەیان دهێن: دەستوور و ئەو یاسایێن پەرلەمان دەردكەت و بڕیارێن دادگەهان و پەیماننامەیێن نێتەوەیی. حكومەت زێدەتر سێ لق هەنە: یاسادانان یاسایان دانیت، جێبەجێكەر جێبەجێ دكەت و دادوەری ناكۆكییان بڕیار ددەت.']],
+  [['Your basic rights','مافێن تە یێن بنەڕەتی'],['Many legal systems protect a fair hearing, the presumption of innocence, the right to a lawyer and protection from discrimination. The Universal Declaration of Human Rights, adopted in 1948, set common standards for the world. Exact rights and procedures depend on your country.','گەلەك سیستەمێن یاسایی دادگەهكرنا دادپەروەر و بێتاوانیێ هەتا تاوان ئیسپات دبیت و مافێ پارێزەری و پاراستنا ژ جیاكاریێ دپارێزن. ڕاگەهاندنا جیهانی یا مافێن مرۆڤی ل ١٩٤٨ هاتە وەرگرتن و ستانداردێن هەڤبەش بۆ جیهانێ دانان. مافێن دیقەت و ڕێكارەكان ب وەلاتی ڤە گرێدایینە.']]],
+ fact:['The Code of Hammurabi, carved on a stone pillar in ancient Babylon, is one of the oldest written legal codes.','كۆدا حەمورابی، ل سەر ستوونەكا بەرین ل بابلا كەڤن هاتیە كەندن، ئێك ژ كەڤنترین كۆدێن یاسایی یێن نڤیسیە.']},
+it:{stats:[[1969,['first message sent on ARPANET, an early internet','یەكەم پەیام ل ARPANET هاتە ڤەگوهاستن'],'','',0,1],[1991,['first website goes online','یەكەم ماڵپەڕ هاتە سەر ئینتەرنێتێ'],'','',0,1],[5,['billion people use the internet','ملیار مرۆڤ ئینتەرنێتێ بكار دئینن'],'+']],
+ ch:[[['Hardware and software','هاردوێر و سۆفتوێر'],['Hardware is the physical machine: the processor (CPU) does the calculations, RAM holds what you are working on right now, and storage keeps files for the long term. Software is the set of instructions that tells the hardware what to do, from the operating system to your apps.','هاردوێر ئامێرێ فیزیكییە: پرۆسێسەر (CPU) ژمارەیان دكەت، RAM ئەو تشتێ تو نوكە كاری ل سەر دكەی دپارێزیت، و پاشەكەفتكەر پەڕگەیان بۆ دەمەكێ درێژ دپارێزیت. سۆفتوێر كۆمەكا ڕێنمایانە كو ب هاردوێری دبێژیت چ بكەت، ژ سیستەمێ كاركرنێ هەتا ئەپان.']],
+  [['Staying secure','ب ئاسایش مانەوە'],['Attackers often trick people instead of breaking in. Phishing messages pretend to be a bank or a friend. Use long, unique passwords, turn on two-factor authentication, install updates and keep backups using the 3-2-1 rule: three copies, on two kinds of storage, with one off-site.','هێرشبەر زێدەتر خەلكی دخاپینن، نەكو بشكێنن. پەیامێن فیشینگ خۆ دكەنە بانك یان هەڤالەك. پاسۆردێن درێژ و تایبەت بكاربینە، پشتڕاستكرنا دوو ڕێگایی چالاك بكە، نویكرنەوەیان دانێ و ب ڕێسایا 3-2-1 باكئاپ ڕاگرە: سێ كۆپی، ل سەر دوو جۆرێن پاشەكەفتی، و ئێك ل دەرڤەی ماڵێ.']]],
+ fact:['In 1947 engineers taped a real moth found inside a Harvard computer into their logbook, a famous early example of a computer “bug”.','ل ١٩٤٧ ئەندازیاران پەپووكەكا ڕاستەقینە یا د ناڤ كۆمپیوتەرەكا هارڤاردێ دا دیتی ل دەفتەرا خۆ ڕاگرت، نموونەكا ناڤدار یا “bug”ێ ل كۆمپیوتەران دا.']},
+chemistry:{stats:[[118,['known elements','توخمێن ناسكری']],[14,['top of the pH scale','بلندترین ئاستێ pH']],[3,['common states of matter','حالەتێن باو یێن مادەیێ']]],
+ ch:[[['States of matter','حالەتێن مادەیێ'],['Matter is usually solid, liquid or gas, depending on how fast its particles move. Heat makes particles move faster, so ice melts at 0 °C and water boils at 100 °C at sea level. A fourth state, plasma, is found in lightning and stars.','مادە زێدەتر قایم یان شلە یان گازە، ب گوهۆڕینا لەزییا پارچیكان. گەرمی پارچیكان لەزتر دكەت، ژ بەر هندێ بەفر ل ٠ پلە دتوێت و ئاڤ ل ١٠٠ پلە ل ئاستێ دەریایێ دكولیت. حالەتەكێ چارەم، پلازما، د بروسكێ و ستێران دا هەیە.']],
+  [['How atoms join','ئەتۆم چەوا ب هەڤ ڤە دهێن'],['Atoms join by sharing or transferring electrons, forming chemical bonds. In water (H₂O) two hydrogen atoms share electrons with one oxygen atom. In table salt (NaCl), sodium gives an electron to chlorine and the two ions attract each other.','ئەتۆم ب هەڤبەشكرن یان ڤەگوهاستنا ئەلەكترۆنان ب هەڤ ڤە دهێن و بەندێن كیمیایی چێدكەن. د ئاڤێ دا (H₂O) دوو ئەتۆمێن هایدرۆجین ئەلەكترۆنان گەل ئەتۆمەكێ ئۆكسجینێ هەڤبەش دكەن. د خوێیا خوارنێ دا (NaCl) سۆدیۆم ئەلەكترۆنەكێ ددەتە كلۆر و ئایۆنێن هەردوویان ب هەڤ ڤە دچن.']]],
+ fact:['Water is the only common substance found naturally as a solid, a liquid and a gas on Earth’s surface.','ئاڤ تەنێ ماددەیا باوە یا ل سەر ڕووی ئەردی ب شێوەیێ سروشتی هەم قایم هەم شلە هەم گاز دهێتە دیتن.']},
+physics:{stats:[[299792,['kilometres per second: the speed of light','كیلۆمەتر د چركەكێ دا: لەزییا ڕووناكیێ']],[1687,['year Newton published his laws of motion','ساڵا نیوتن یاسایێن جووڵەیێ بەلاڤكرین'],'','',0,1],[273.15,['absolute zero, the coldest possible temperature','سفرا ڕەها، سارترین پلەیا گونجایی'],' °C','−',2]],
+ ch:[[['Energy never disappears','ئەنەرژی ناچیتە ژ ناڤ'],['Energy cannot be created or destroyed, only changed from one form to another. A rollercoaster turns stored (potential) energy at the top into movement (kinetic) energy on the way down, and some becomes heat and sound.','ئەنەرژی ناهێتە چێكرن و نایێتە ژناڤبرن، تەنێ ژ شێوەیەكی دبیتە شێوەیەكێ دی. ڕۆلەركۆستەر ئەنەرژییا پاشەكەفتكری ل سەری دكەتە ئەنەرژییا جووڵەیێ د دابەزینێ دا، و بەشەك دبیتە گەرمی و دەنگ.']],
+  [['Waves and light','شەپۆل و ڕووناكی'],['Sound is a vibration that needs something to travel through, like air. Light is an electromagnetic wave and can cross empty space. Radio waves, visible light and X-rays are all the same kind of wave with different wavelengths.','دەنگ ڕاجەنینەكە و پێدڤی ب تشتەكی هەیە دا پێدا بچیت، وەك هەوا. ڕووناكی شەپۆلەكا ئەلەكترۆمەگناتیسییە و دشێت ژ بۆشاییێ ببوریت. شەپۆلێن ڕادیۆیی و ڕووناكیا دیتی و تیشكێن ئێكس هەمی ژ ئێك جۆرن، تەنێ درێژاییا شەپۆلێ جیاوازە.']]],
+ fact:['A lightning bolt can heat the air around it to about 30,000 °C, much hotter than the surface of the Sun.','بروسكەك دشێت هەوایا دۆرەبەرا خۆ ب نێزیكی ٣٠٬٠٠٠ پلە گەرم بكەت، گەلەك گەرمتر ژ ڕووی رۆژێ.']},
+biology:{stats:[[46,['chromosomes in a human cell','كرۆمۆسۆم د خانەیەكا مرۆڤی دا']],[20000,['genes, roughly, in the human genome','ژن، نێزیكی، د جینۆمێ مرۆڤی دا']],[8.7,['million species estimated on Earth','ملیۆن جۆرێن ژیندارا یێن هەژمارتی ل سەر ئەردی'],'','',1]],
+ ch:[[['Inside a cell','د ناڤ خانەیێ دا'],['The nucleus holds the DNA, mitochondria release energy from food, and the cell membrane controls what goes in and out. Plant cells also have a rigid cell wall and chloroplasts, which capture sunlight for photosynthesis.','ناڤك DNA دپارێزیت، مایتۆكۆندریا ئەنەرژیێ ژ خوارنێ ئازاد دكەت، و پەردا خانەیێ كونترۆل دكەت چ دچیتە ژوور و چ دهێتە دەر. خانەیێن ڕووەكان دیوارەكا ڕەق و كلۆرۆپلاست ژی هەنە، كو ڕووناكیا رۆژێ بۆ وەرگرتنا ڕووناكیێ دگرن.']],
+  [['Evolution','پەرەسەندن'],['Species change over many generations through natural selection: individuals with helpful traits survive and reproduce more often. Charles Darwin described this idea in On the Origin of Species in 1859, and DNA evidence has since confirmed it.','جۆرێن ژیندارا د ناڤ چەندین نەوەیان دا ب هەلبژاردنا سروشتی دگوهۆڕن: ئەو تاكێن تایبەتمەندییێن بكەڵك هەین ژیان و زێدەبوونێ پتر دكەن. چارلز داروین ڤێ بیرۆكێ ل كتێبا On the Origin of Species ل ١٨٥٩ دا ڕوون كر و بەلگەیێن DNA پشتی هنگێ پشتڕاست كرییە.']]],
+ fact:['A person carries roughly as many bacteria as human cells, and most of them are harmless or helpful.','مرۆڤ نێزیكی هەمان ژمارا خانەیێن مرۆڤی باكتریا هەلدگریت، و زێدەتر وان زیانبار نینن یان بكەڵكن.']}
+};
+const WHEEL='♈♉♊♋♌♍♎♏♐♑♒♓'.split('');
+const FX={astrology:{c:['✦','✧','★','·'],a:'tw',n:46},medicine:{c:['+','✚','♥'],a:'rise',n:20},law:{c:['§','⚖','¶','⚜'],a:'drift',n:16},it:{c:['0','1','01','</>','{ }'],a:'fall',n:42},chemistry:{c:['⬡','○','⬢','◯'],a:'rise',n:24},physics:{c:['⚛','∿','λ','π','∞','Σ'],a:'spin',n:20},biology:{c:['●','○','◉','◌'],a:'drift',n:26}};
+const XTRA={
+ astrology:`<div class="wheel">${WHEEL.map((g,i)=>`<i style="--a:${i*30}deg">${g}</i>`).join('')}</div>`,
+ medicine:`<svg class="ecg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 60H300L330 60 350 18 375 102 395 60H700L730 60 750 18 775 102 795 60H1200"/></svg>`,
+ physics:`<div class="atom"><i style="--a:0deg"></i><i style="--a:60deg"></i><i style="--a:120deg"></i></div>`,
+ biology:`<div class="dna">${Array.from({length:16},(_,i)=>`<b style="--i:${i}"></b>`).join('')}</div>`
+};
+function fx(s){const f=FX[s.id];let o='';for(let i=0;i<f.n;i++){o+=`<i class="f f-${f.a}" style="left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${10+Math.random()*26}px;animation-duration:${6+Math.random()*10}s;animation-delay:${-Math.random()*12}s">${f.c[i%f.c.length]}</i>`}return o+(XTRA[s.id]||'')}
+function count(el){const b=el.querySelector('b'),n=+b.dataset.n,d=+b.dataset.d,raw=b.dataset.raw==='1',loc=lang?'ar-EG':'en-US',fmt=v=>b.dataset.p+(raw?Math.round(v).toLocaleString(loc,{useGrouping:false}):v.toLocaleString(loc,{minimumFractionDigits:d,maximumFractionDigits:d}))+b.dataset.s;
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches){b.textContent=fmt(n);return}
+ const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/1600);b.textContent=fmt(n*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)}
+let lang=0;try{lang=localStorage.getItem('eiop')==='1'?1:0}catch(e){}
+const $=id=>document.getElementById(id);
+
+/* Loading screen: two rings of subject icons orbiting each other */
+const ico=S.map(s=>s.e);
+$('orbit').innerHTML=`<div class="core"></div>
+<div class="ring">${ico.slice(0,4).map((e,i)=>`<div class="ic" style="--a:${i*90}deg;--r:min(150px,40vw)"><span>${e}</span></div>`).join('')}</div>
+<div class="ring in rev">${ico.slice(4).map((e,i)=>`<div class="ic" style="--a:${i*120}deg;--r:min(78px,21vw)"><span>${e}</span></div>`).join('')}</div>`;
+setTimeout(()=>$('ld').classList.add('out'),matchMedia('(prefers-reduced-motion:reduce)').matches?600:2600);
+$('stars').innerHTML=Array.from({length:40},()=>`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s"></i>`).join('');
+
+function render(){
+  const L=lang,h=document.documentElement;
+  h.lang=L?'ku':'en';h.dir=L?'rtl':'ltr';document.title=UI.title[L];
+  $('logo').textContent=UI.title[L];$('lang').textContent=UI.btn[L];
+  $('ldt').textContent=UI.title[L];$('ldb').textContent=UI.by[L];
+  $('h1').innerHTML=UI.h1[L];$('sub').textContent=UI.sub[L];$('by').textContent=UI.by[L];
+  $('foot').innerHTML=`<b>${UI.title[L]}</b><p>${UI.by[L]}</p><p>${UI.foot[L]}</p>`;
+  $('links').innerHTML=S.map(s=>`<a href="#${s.id}" data-s="${s.id}">${s.name[L]}</a>`).join('');
+  $('tiles').innerHTML=S.map(s=>`<a class="tile" href="#${s.id}"><span class="pe" aria-hidden="true">${s.e}</span>${pic(s.hero,500,s.name[0])}<div><b>${s.name[L]}</b><span>${s.tag[L]}</span></div></a>`).join('');
+  $('secs').innerHTML=S.map((s,i)=>`
+  <section class="sec ${s.cls}" id="${s.id}">
+    <div class="fx" aria-hidden="true">${fx(s)}</div>
+    <div class="banner"><span class="pe" aria-hidden="true">${s.e}</span>${pic(s.hero,1400,s.name[0])}<div class="bt"><span class="num">0${i+1} · ${s.name[L]}</span><h2>${s.title[L]}</h2><p>${s.lede[L]}</p></div></div>
+    <div class="inner">
+      <div class="cards">${s.cards.map((c,j)=>`<div class="card rv" style="--i:${j}"><div class="e">${c[0]}</div><h4>${c[1][L]}</h4><p>${c[2][L]}</p></div>`).join('')}</div>
+      <div class="stats">${D[s.id].stats.map((x,j)=>`<div class="stat rv" style="--i:${j}"><b data-n="${x[0]}" data-d="${x[4]||0}" data-raw="${x[5]||0}" data-p="${x[3]||''}" data-s="${x[2]||''}">0</b><span>${x[1][L]}</span></div>`).join('')}</div>
+      <h3 class="h3 rv">${UI.deep[L]}</h3>
+      <div class="chaps">${D[s.id].ch.map((c,j)=>`<div class="chap rv ${j?'sr':'sl'}"><i>0${j+1}</i><h4>${c[0][L]}</h4><p>${c[1][L]}</p></div>`).join('')}</div>
+      <div class="gal">${s.gal.map((g,j)=>`<div class="ph rv" style="--i:${j}"><span class="pe" aria-hidden="true">${s.e}</span>${pic(g,700,s.name[0])}</div>`).join('')}</div>
+      <div class="fact rv"><span>💡</span><div><b>${UI.dyk[L]}</b><p>${D[s.id].fact[L]}</p></div></div>
+      <p class="note rv">${s.note[L]}</p>
+    </div>
+  </section>`).join('');
+  /* load photos, trying a second address if the first fails */
+  document.querySelectorAll('img[data-id]').forEach(im=>{const l=urls(im.dataset.id,im.dataset.w);let k=0;im.onload=()=>im.classList.add('ok');im.onerror=()=>{if(++k<l.length)im.src=l[k]};im.src=l[0]});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+  document.querySelectorAll('.sec').forEach(s=>nav.observe(s));
+}
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add('in');if(e.target.classList.contains('stat'))count(e.target);io.unobserve(e.target)}),{threshold:.12});
+const nav=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)document.querySelectorAll('.links a').forEach(a=>a.classList.toggle('on',a.dataset.s===e.target.id))}),{rootMargin:'-45% 0px -50% 0px'});
+$('lang').onclick=()=>{lang=1-lang;try{localStorage.setItem('eiop',lang)}catch(e){}render()};
+addEventListener('scroll',()=>{const h=document.documentElement;$('prog').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';if(!matchMedia('(prefers-reduced-motion:reduce)').matches)document.querySelectorAll('.banner').forEach(b=>{const r=b.getBoundingClientRect();if(r.bottom>0&&r.top<innerHeight)b.style.setProperty('--py',(-r.top*.18)+'px')})},{passive:true});
+render();
+</script>
+</body>
+</html>
